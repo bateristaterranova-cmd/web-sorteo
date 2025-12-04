@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Sorteo Starmusic 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { background-color: #0f172a; color: #fff; font-family: 'Inter', sans-serif; }
+        .input-modern {
+            background-color: #1e293b; border: 1px solid #334155; color: white;
+            transition: all 0.3s ease;
+        }
+        .input-modern:focus { border-color: #3b82f6; ring: 2px; outline: none; }
+        .input-disabled { opacity: 0.5; cursor: not-allowed; background-color: #0f172a; }
+        .loader {
+            border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%;
+            width: 20px; height: 20px; animation: spin 1s linear infinite; display: none;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-md w-full bg-slate-800 rounded-2xl shadow-2xl overflow-hidden p-8 border border-slate-700">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-blue-500 mb-2">Starmusic 2026</h1>
+            <p class="text-slate-400">Completa tus datos para participar en el sorteo.</p>
+        </div>
+
+        <form id="sorteoForm" class="space-y-6">
+            
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">DNI</label>
+                <div class="relative">
+                    <input type="text" id="dni" maxlength="8" class="input-modern w-full rounded-lg p-3 pr-10" placeholder="Ingresa tu DNI">
+                    <div id="dniLoader" class="loader absolute right-3 top-3.5"></div>
+                </div>
+                <p id="dniError" class="text-red-400 text-xs mt-1 hidden">No se encontró el DNI, ingrese nombre manual.</p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">Nombre Completo</label>
+                <input type="text" id="nombre" class="input-modern w-full rounded-lg p-3" placeholder="Tu nombre aparecerá aquí o escríbelo">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">Número de WhatsApp</label>
+                <input type="tel" id="telefono" maxlength="15" class="input-modern w-full rounded-lg p-3" placeholder="999 999 999">
+            </div>
+
+            <div id="uploadContainer" class="opacity-50 pointer-events-none transition-all duration-300">
+                <label class="block text-sm font-medium text-slate-300 mb-1">Subir Comprobante (Imagen)</label>
+                <input type="file" id="comprobante" accept="image/*" class="block w-full text-sm text-slate-400
+                  file:mr-4 file:py-2 file:px-4
+                  file:rounded-full file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-blue-600 file:text-white
+                  hover:file:bg-blue-700
+                  cursor-pointer bg-slate-900 rounded-lg border border-slate-600
+                "/>
+                <p class="text-xs text-slate-500 mt-1">Sube la captura de tu Yape/Plin.</p>
+            </div>
+
+            <button type="submit" id="btnEnviar" disabled class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                Registrarme en el Sorteo
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN
+        const WEBHOOK_URL = 'https://n8n.yaperocallate.com/webhook-test/registro-sorteo'; // Tu URL de n8n
+        const API_DNI_TOKEN = 'apis-token-13473.uymSmC6iDxIwZNgyAYAuHkUNineChMRT'; // Tu Token
+
+        const dniInput = document.getElementById('dni');
+        const nombreInput = document.getElementById('nombre');
+        const telefonoInput = document.getElementById('telefono');
+        const fileInput = document.getElementById('comprobante');
+        const uploadContainer = document.getElementById('uploadContainer');
+        const btnEnviar = document.getElementById('btnEnviar');
+        const dniLoader = document.getElementById('dniLoader');
+
+        // 1. Lógica del DNI
+        dniInput.addEventListener('input', async (e) => {
+            const dni = e.target.value.replace(/\D/g, ''); // Solo números
+            e.target.value = dni;
+
+            checkFormValidity(); // Verificar si desbloqueamos
+
+            if (dni.length === 8) {
+                // Iniciar búsqueda
+                dniLoader.style.display = 'block';
+                nombreInput.classList.add('opacity-50');
+                
+                try {
+                    const response = await fetch(`https://api.apis.net.pe/v1/dni?numero=${dni}&apikey=${API_DNI_TOKEN}`);
+                    const data = await response.json();
+                    
+                    if (data && data.nombres) {
+                        nombreInput.value = `${data.nombres} ${data.apellidoPaterno} ${data.apellidoMaterno}`;
+                        document.getElementById('dniError').classList.add('hidden');
+                    } else {
+                        throw new Error('No encontrado');
+                    }
+                } catch (error) {
+                    console.log('Error o DNI no encontrado, permitir manual');
+                    document.getElementById('dniError').classList.remove('hidden');
+                    nombreInput.value = '';
+                    nombreInput.focus();
+                } finally {
+                    dniLoader.style.display = 'none';
+                    nombreInput.classList.remove('opacity-50');
+                    checkFormValidity();
+                }
+            }
+        });
+
+        // 2. Lógica de validación para desbloquear la subida de archivo
+        function checkFormValidity() {
+            const isDniOk = dniInput.value.length === 8;
+            const isNameOk = nombreInput.value.trim().length > 2;
+            const isPhoneOk = telefonoInput.value.length >= 9;
+
+            // Desbloquear campo de archivo si datos personales están ok
+            if (isDniOk && isNameOk && isPhoneOk) {
+                uploadContainer.classList.remove('opacity-50', 'pointer-events-none');
+            } else {
+                uploadContainer.classList.add('opacity-50', 'pointer-events-none');
+                fileInput.value = ''; // Resetear archivo si cambia algo
+            }
+
+            // Desbloquear botón enviar si hay archivo
+            if (isDniOk && isNameOk && isPhoneOk && fileInput.files.length > 0) {
+                btnEnviar.disabled = false;
+            } else {
+                btnEnviar.disabled = true;
+            }
+        }
+
+        // Escuchar cambios en todos los campos para validar en tiempo real
+        [nombreInput, telefonoInput, fileInput].forEach(input => {
+            input.addEventListener('input', checkFormValidity);
+            input.addEventListener('change', checkFormValidity);
+        });
+
+        // 3. Envío al Webhook de n8n
+        document.getElementById('sorteoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            btnEnviar.innerHTML = 'Enviando...';
+            btnEnviar.disabled = true;
+
+            const formData = new FormData();
+            formData.append('dni', dniInput.value);
+            formData.append('nombre', nombreInput.value);
+            formData.append('telefono', telefonoInput.value);
+            formData.append('fecha', new Date().toLocaleString());
+            formData.append('archivo', fileInput.files[0]); // El archivo se envía como binario
+
+            try {
+                // Enviar a n8n
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    Swal.fire({
+                        title: '¡Registrado!',
+                        text: 'Tus datos se han enviado correctamente.',
+                        icon: 'success',
+                        confirmButtonText: 'Genial'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    throw new Error('Error en el servidor');
+                }
+            } catch (error) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al enviar. Inténtalo de nuevo.',
+                    icon: 'error'
+                });
+                btnEnviar.innerHTML = 'Registrarme en el Sorteo';
+                btnEnviar.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
