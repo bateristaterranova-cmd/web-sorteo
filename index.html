@@ -3,76 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro Sorteo Starmusic 2026</title>
+    <title>Sorteo Starmusic 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
     <style>
-        body { background-color: #0f172a; color: #fff; font-family: 'Inter', sans-serif; }
+        /* 1. Fondo y Tipografía Modernos */
+        body {
+            background: radial-gradient(circle at top center, #1e293b 0%, #020617 100%);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        /* 2. Efecto Cristal (Glassmorphism) para el formulario */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* 3. Animación de Entrada */
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-enter {
+            animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Estilos de Inputs */
         .input-modern {
-            background-color: #1e293b; border: 1px solid #334155; color: white;
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            color: white;
             transition: all 0.3s ease;
         }
-        .input-modern:focus { border-color: #3b82f6; ring: 2px; outline: none; }
-        .input-disabled { opacity: 0.5; cursor: not-allowed; background-color: #0f172a; }
+        .input-modern:focus {
+            border-color: #3b82f6;
+            background-color: rgba(15, 23, 42, 0.9);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        
+        /* Loader giratorio */
         .loader {
-            border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%;
-            width: 20px; height: 20px; animation: spin 1s linear infinite; display: none;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 0.8s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Input File personalizado */
+        input[type="file"]::file-selector-button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            margin-right: 1rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        input[type="file"]::file-selector-button:hover { background-color: #1d4ed8; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body>
 
-    <div class="max-w-md w-full bg-slate-800 rounded-2xl shadow-2xl overflow-hidden p-8 border border-slate-700">
+    <div class="glass-card w-full max-w-md rounded-2xl p-8 animate-enter">
+        
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-blue-500 mb-2">Starmusic 2026</h1>
-            <p class="text-slate-400">Completa tus datos para participar en el sorteo.</p>
+            <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500 mb-2">
+                Starmusic 2026
+            </h1>
+            <p class="text-slate-400 text-sm">Registro oficial de participantes</p>
         </div>
 
-        <form id="sorteoForm" class="space-y-6">
+        <form id="sorteoForm" class="space-y-5">
             
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-1">DNI</label>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">DNI</label>
                 <div class="relative">
-                    <input type="text" id="dni" maxlength="8" class="input-modern w-full rounded-lg p-3 pr-10" placeholder="Ingresa tu DNI">
-                    <div id="dniLoader" class="loader absolute right-3 top-3.5"></div>
+                    <input type="tel" id="dni" maxlength="8" class="input-modern w-full rounded-xl p-3 pr-10 text-lg tracking-widest font-mono" placeholder="Ingresa tu DNI">
+                    <div id="dniLoader" class="hidden absolute right-3 top-4 loader"></div>
                 </div>
-                <p id="dniError" class="text-red-400 text-xs mt-1 hidden">No se encontró el DNI, ingrese nombre manual.</p>
+                <p id="dniError" class="text-amber-400 text-xs mt-2 hidden flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                    No se encontró. Escribe tu nombre manualmente.
+                </p>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-1">Nombre Completo</label>
-                <input type="text" id="nombre" class="input-modern w-full rounded-lg p-3" placeholder="Tu nombre aparecerá aquí o escríbelo">
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Nombre Completo</label>
+                <input type="text" id="nombre" class="input-modern w-full rounded-xl p-3" placeholder="Tu nombre aparecerá aquí">
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-1">Número de WhatsApp</label>
-                <input type="tel" id="telefono" maxlength="15" class="input-modern w-full rounded-lg p-3" placeholder="999 999 999">
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Número de WhatsApp</label>
+                <input type="tel" id="telefono" maxlength="15" class="input-modern w-full rounded-xl p-3" placeholder="999 999 999">
             </div>
 
             <div id="uploadContainer" class="opacity-50 pointer-events-none transition-all duration-300">
-                <label class="block text-sm font-medium text-slate-300 mb-1">Subir Comprobante (Imagen)</label>
-                <input type="file" id="comprobante" accept="image/*" class="block w-full text-sm text-slate-400
-                  file:mr-4 file:py-2 file:px-4
-                  file:rounded-full file:border-0
-                  file:text-sm file:font-semibold
-                  file:bg-blue-600 file:text-white
-                  hover:file:bg-blue-700
-                  cursor-pointer bg-slate-900 rounded-lg border border-slate-600
-                "/>
-                <p class="text-xs text-slate-500 mt-1">Sube la captura de tu Yape/Plin.</p>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Foto del Comprobante (Yape/Plin)</label>
+                <div class="relative group">
+                    <input type="file" id="comprobante" accept="image/*" class="input-modern w-full rounded-xl p-2 text-sm text-slate-300 cursor-pointer">
+                </div>
             </div>
 
-            <button type="submit" id="btnEnviar" disabled class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                Registrarme en el Sorteo
+            <button type="submit" id="btnEnviar" disabled class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transform transition hover:-translate-y-1 hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none mt-4">
+                Registrarme Ahora
             </button>
         </form>
     </div>
 
     <script>
-        // CONFIGURACIÓN
-        const WEBHOOK_URL = 'https://n8n.yaperocallate.com/webhook-test/registro-sorteo'; // Tu URL de n8n
-        const API_DNI_TOKEN = 'apis-token-13473.uymSmC6iDxIwZNgyAYAuHkUNineChMRT'; // Tu Token
+        // --- CONFIGURACIÓN ---
+        // 1. CAMBIA ESTO a tu URL de Producción cuando termines de probar
+        const WEBHOOK_URL = 'https://n8n.yaperocallate.com/webhook-test/registro-sorteo'; 
+        
+        // 2. Tu API Token (Ya puesto)
+        const API_DNI_TOKEN = '13473.uymSmC6iDxIwZNgyAYAuHkUNineChMRT'; 
+        // ---------------------
 
         const dniInput = document.getElementById('dni');
         const nombreInput = document.getElementById('nombre');
@@ -81,86 +142,94 @@
         const uploadContainer = document.getElementById('uploadContainer');
         const btnEnviar = document.getElementById('btnEnviar');
         const dniLoader = document.getElementById('dniLoader');
+        const dniErrorText = document.getElementById('dniError');
 
-        // 1. Lógica del DNI
+        // --- LÓGICA DE DNI ---
         dniInput.addEventListener('input', async (e) => {
-            const dni = e.target.value.replace(/\D/g, ''); // Solo números
+            const dni = e.target.value.replace(/\D/g, ''); // Limpiar no numéricos
             e.target.value = dni;
-
-            checkFormValidity(); // Verificar si desbloqueamos
+            
+            checkFormValidity();
 
             if (dni.length === 8) {
                 // Iniciar búsqueda
                 dniLoader.style.display = 'block';
-                nombreInput.classList.add('opacity-50');
+                dniErrorText.classList.add('hidden');
                 
                 try {
                     const response = await fetch(`https://api.apis.net.pe/v1/dni?numero=${dni}&apikey=${API_DNI_TOKEN}`);
+                    
+                    if (!response.ok) throw new Error('Error API');
+                    
                     const data = await response.json();
                     
                     if (data && data.nombres) {
+                        // ÉXITO: Rellenar nombre
                         nombreInput.value = `${data.nombres} ${data.apellidoPaterno} ${data.apellidoMaterno}`;
-                        document.getElementById('dniError').classList.add('hidden');
+                        nombreInput.classList.add('bg-slate-700'); // Efecto visual de "autocompletado"
+                        setTimeout(() => nombreInput.classList.remove('bg-slate-700'), 1000);
                     } else {
                         throw new Error('No encontrado');
                     }
                 } catch (error) {
-                    console.log('Error o DNI no encontrado, permitir manual');
-                    document.getElementById('dniError').classList.remove('hidden');
+                    // FALLO O BLOQUEO: Permitir escritura manual
+                    console.log('Fallo búsqueda DNI (posiblemente CORS o no encontrado). Habilitando manual.');
+                    dniErrorText.classList.remove('hidden');
                     nombreInput.value = '';
                     nombreInput.focus();
                 } finally {
                     dniLoader.style.display = 'none';
-                    nombreInput.classList.remove('opacity-50');
                     checkFormValidity();
                 }
+            } else {
+                dniErrorText.classList.add('hidden');
             }
         });
 
-        // 2. Lógica de validación para desbloquear la subida de archivo
+        // --- VALIDACIÓN DE FORMULARIO ---
         function checkFormValidity() {
             const isDniOk = dniInput.value.length === 8;
             const isNameOk = nombreInput.value.trim().length > 2;
             const isPhoneOk = telefonoInput.value.length >= 9;
 
-            // Desbloquear campo de archivo si datos personales están ok
+            // 1. Desbloquear Subida de archivo
             if (isDniOk && isNameOk && isPhoneOk) {
                 uploadContainer.classList.remove('opacity-50', 'pointer-events-none');
             } else {
                 uploadContainer.classList.add('opacity-50', 'pointer-events-none');
-                fileInput.value = ''; // Resetear archivo si cambia algo
             }
 
-            // Desbloquear botón enviar si hay archivo
+            // 2. Desbloquear Botón Enviar
             if (isDniOk && isNameOk && isPhoneOk && fileInput.files.length > 0) {
                 btnEnviar.disabled = false;
+                btnEnviar.innerHTML = 'Registrarme Ahora';
             } else {
                 btnEnviar.disabled = true;
             }
         }
 
-        // Escuchar cambios en todos los campos para validar en tiempo real
-        [nombreInput, telefonoInput, fileInput].forEach(input => {
-            input.addEventListener('input', checkFormValidity);
-            input.addEventListener('change', checkFormValidity);
+        // Escuchar eventos en todos los campos
+        [nombreInput, telefonoInput, fileInput].forEach(el => {
+            el.addEventListener('input', checkFormValidity);
+            el.addEventListener('change', checkFormValidity);
         });
 
-        // 3. Envío al Webhook de n8n
+        // --- ENVÍO A N8N ---
         document.getElementById('sorteoForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            btnEnviar.innerHTML = 'Enviando...';
+            // Estado de carga
             btnEnviar.disabled = true;
+            btnEnviar.innerHTML = `<div class="inline-block loader border-t-white mr-2"></div> Enviando...`;
 
             const formData = new FormData();
             formData.append('dni', dniInput.value);
             formData.append('nombre', nombreInput.value);
-            formData.append('telefono', telefonoInput.value);
+            formData.append('whatsapp', telefonoInput.value);
             formData.append('fecha', new Date().toLocaleString());
-            formData.append('archivo', fileInput.files[0]); // El archivo se envía como binario
+            formData.append('archivo', fileInput.files[0]);
 
             try {
-                // Enviar a n8n
                 const response = await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     body: formData
@@ -168,24 +237,28 @@
 
                 if (response.ok) {
                     Swal.fire({
-                        title: '¡Registrado!',
-                        text: 'Tus datos se han enviado correctamente.',
+                        title: '¡Registro Exitoso!',
+                        text: 'Mucha suerte en el sorteo.',
                         icon: 'success',
-                        confirmButtonText: 'Genial'
+                        background: '#1e293b',
+                        color: '#fff',
+                        confirmButtonColor: '#3b82f6'
                     }).then(() => {
                         window.location.reload();
                     });
                 } else {
-                    throw new Error('Error en el servidor');
+                    throw new Error('Error en el envío');
                 }
             } catch (error) {
                 Swal.fire({
-                    title: 'Error',
-                    text: 'Hubo un problema al enviar. Inténtalo de nuevo.',
-                    icon: 'error'
+                    title: 'Hubo un error',
+                    text: 'No pudimos enviar tus datos. Revisa tu conexión.',
+                    icon: 'error',
+                    background: '#1e293b',
+                    color: '#fff'
                 });
-                btnEnviar.innerHTML = 'Registrarme en el Sorteo';
                 btnEnviar.disabled = false;
+                btnEnviar.innerHTML = 'Intentar de nuevo';
             }
         });
     </script>
