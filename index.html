@@ -20,14 +20,13 @@
             color: #1f2937;
             overflow-x: hidden;
             padding-bottom: 140px; 
-            /* AUMENTADO: Aún más espacio arriba para separar visualmente el menú de la tarjeta */
-            padding-top: 180px; 
+            /* Se elimina el padding-top excesivo del body, el control pasa al .white-panel */
         }
         
         .fabric-bg {
             background-image: 
                 linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)),
-                url("https://i.postimg.cc/bdcNtyff/image.png");
+                url("https://res.cloudinary.com/ds1mro6a1/image/upload/v1765305829/484874887_1060587119429368_6598229238412344925_n_qgftnt.jpg");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -63,6 +62,8 @@
             backdrop-filter: blur(10px);
             border: 2px solid #FFD700;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 0 0 5px rgba(255, 215, 0, 0.1);
+            /* AJUSTE: Margen superior específico para evitar choque con el menú fijo (80px menú + espacio) */
+            margin-top: 100px;
         }
 
         .custom-input {
@@ -163,7 +164,7 @@
         /* Botón Flotante de WhatsApp */
         .whatsapp-float {
             position: fixed;
-            bottom: 90px; /* Encima del contador (aprox 70-80px alto) */
+            bottom: 90px;
             right: 20px;
             background-color: #25d366;
             color: white;
@@ -190,28 +191,25 @@
         html { scroll-behavior: smooth; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4">
+<!-- AJUSTE: Cambiamos 'justify-center' por 'justify-start' para evitar que el contenido suba y choque con el menú -->
+<body class="min-h-screen flex flex-col items-center justify-start p-4">
 
     <!-- MENÚ SUPERIOR -->
     <nav class="glass-header w-full fixed top-0 left-0 z-50 px-4 py-3 flex justify-between items-center">
         <!-- Izquierda: Logo Mini -->
         <div class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition" onclick="scrollToTop()">
-            <img src="https://i.postimg.cc/yYLBZn1n/IMG-2743.png" alt="Logo Mini" class="h-14 w-auto object-contain drop-shadow-sm">
+            <img src="https://res.cloudinary.com/ds1mro6a1/image/upload/v1765305589/IMG_2743_n29h1e.png" alt="Logo Mini" class="h-14 w-auto object-contain drop-shadow-sm">
         </div>
 
         <!-- Derecha: Redes + Botón Acción -->
         <div class="flex items-center gap-4">
-            <!-- Facebook -->
             <a href="https://www.facebook.com/CLUB.JUVENTUD.STARMUSIC" target="_blank" class="nav-icon hidden sm:inline-block" title="Facebook">
                 <i class="fab fa-facebook fa-lg"></i>
             </a>
-            <!-- Instagram -->
             <a href="https://www.instagram.com/comparsa_juventud_starmusic/" target="_blank" class="nav-icon hidden sm:inline-block" title="Instagram">
                 <i class="fab fa-instagram fa-lg"></i>
             </a>
-            
             <div class="h-6 w-px bg-gray-300 hidden sm:block"></div>
-
             <button onclick="scrollToPayment()" class="bg-yellow-400 hover:bg-yellow-500 text-black text-xs font-bold py-2 px-4 rounded-full shadow-md transition flex items-center gap-2 animate-pulse">
                 <i class="fas fa-ticket-alt"></i>
                 <span>TICKET</span>
@@ -225,14 +223,13 @@
     <div class="floral-accent floral-blue" style="top: 40%; right: 5%;"></div>
 
     <!-- Contenedor Único -->
-    <!-- Mantenemos un margen seguro -->
     <div class="w-full max-w-md white-panel rounded-3xl px-8 pt-5 pb-8 relative z-10 mb-12">
         
         <!-- PARTE SUPERIOR: FORMULARIO -->
         <div id="mainFormSection">
             <div class="text-center mb-2">
                 <!-- LOGO PRINCIPAL -->
-                <img src="https://i.postimg.cc/yYLBZn1n/IMG-2743.png" 
+                <img src="https://res.cloudinary.com/ds1mro6a1/image/upload/v1765305589/IMG_2743_n29h1e.png" 
                      alt="Logo Comparsa Starmusic" 
                      class="w-full max-w-[350px] mx-auto drop-shadow-xl hover:scale-105 transition-transform duration-300">
                 <p class="text-gray-500 text-xs font-bold uppercase tracking-[0.3em] mt-0">Sorteo 2025</p>
@@ -247,6 +244,58 @@
 
             <form id="sorteoForm" class="space-y-5">
                 
+                <!-- NUEVA SECCIÓN: SELECTOR DE TICKETS (Slider Unificado) -->
+                <div>
+                    <!-- Encabezado con la frase nueva -->
+                    <!-- Aumenté el margen inferior de mb-3 a mb-6 para dar espacio al badge flotante -->
+                    <div class="flex justify-between items-center mb-6 px-1">
+                        <label class="block text-xs font-bold text-gray-700">ELIGE TUS TICKETS</label>
+                        <span class="text-[10px] font-bold text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full border border-yellow-200 shadow-sm animate-pulse">
+                            <i class="fas fa-chart-line mr-1"></i>¡Maximiza tus posibilidades!
+                        </span>
+                    </div>
+                    
+                    <!-- Inputs ocultos -->
+                    <input type="hidden" name="cantidad_tickets" id="cantidad_tickets" value="2">
+                    <input type="hidden" name="monto_pagar" id="monto_pagar" value="15.00">
+
+                    <!-- Contenedor del Slider (Pista Gris) -->
+                    <div class="relative bg-gray-100 rounded-xl p-1.5 h-24 mt-1 shadow-inner border border-gray-200">
+                        
+                        <!-- Elemento Deslizante (Fondo Blanco Iluminado) -->
+                        <!-- Se inicia en left: 33.33% porque la opción 2 es la default -->
+                        <div id="selection-slider" class="absolute top-1.5 bottom-1.5 w-[32%] bg-white border-2 border-yellow-400 rounded-lg shadow-md transition-all duration-300 ease-out z-0" style="left: 33.8%;"></div>
+
+                        <!-- Grid de Opciones (Clickables) -->
+                        <div class="relative z-10 grid grid-cols-3 h-full">
+                            
+                            <!-- Opción 1 -->
+                            <div class="flex flex-col justify-center items-center cursor-pointer group" onclick="selectTicket(1, 10, 0)">
+                                <span class="text-sm font-bold text-gray-600 group-hover:text-black transition-colors">1 Ticket</span>
+                                <span class="text-xl font-bold text-gray-500 mt-1 group-hover:text-gray-700 transition-colors">S/ 10</span>
+                            </div>
+
+                            <!-- Opción 2 (Default - Más Comprado) -->
+                            <div class="flex flex-col justify-center items-center cursor-pointer relative group" onclick="selectTicket(2, 15, 1)">
+                                <!-- Badge "Más Comprado" MODIFICADO: Dorado Iluminado -->
+                                <span class="absolute -top-5 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-600 text-white text-[9px] px-2 py-0.5 rounded-full font-extrabold uppercase shadow-[0_0_10px_rgba(250,204,21,0.6)] z-20 tracking-wider border border-yellow-300">
+                                    MÁS COMPRADO
+                                </span>
+                                <span class="text-sm font-bold text-gray-800">2 Tickets</span>
+                                <!-- Precio más grande y dorado -->
+                                <span class="text-2xl font-black text-yellow-600 mt-1">S/ 15</span>
+                            </div>
+
+                            <!-- Opción 3 -->
+                            <div class="flex flex-col justify-center items-center cursor-pointer group" onclick="selectTicket(3, 20, 2)">
+                                <span class="text-sm font-bold text-gray-600 group-hover:text-black transition-colors">3 Tickets</span>
+                                <span class="text-xl font-bold text-gray-500 mt-1 group-hover:text-gray-700 transition-colors">S/ 20</span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Campo DNI -->
                 <div>
                     <div class="flex justify-between items-center mb-1">
@@ -341,10 +390,10 @@
                 <p class="text-sm text-gray-500">Escanea el QR para pagar</p>
             </div>
 
-            <!-- Precio -->
-            <div class="mb-6">
-                <span class="block text-xs font-bold text-gray-400 uppercase tracking-widest">Costo del Ticket</span>
-                <span class="font-star text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-700">S/ 10.00</span>
+            <!-- Precio DINÁMICO -->
+            <div class="mb-6 animate-fade-in">
+                <span class="block text-xs font-bold text-gray-400 uppercase tracking-widest">Monto a Pagar</span>
+                <span id="displayAmount" class="font-star text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-700 transition-all duration-300">S/ 15.00</span>
             </div>
 
             <!-- QR -->
@@ -419,6 +468,32 @@
     <script>
         const WEBHOOK_URL = 'https://n8n.yaperocallate.com/webhook/registro-sorteo';
         const API_DNI_TOKEN = '13473.uymSmC6iDxIwZNgyAYAuHkUNineChMRT';
+
+        // --- LÓGICA DE SELECCIÓN DE TICKETS (CON SLIDER) ---
+        function selectTicket(qty, price, index) {
+            // 1. Mover el slider de fondo
+            const slider = document.getElementById('selection-slider');
+            // Calculamos posición: index 0 = 1.5%, index 1 = 33.8%, index 2 = 66.5% (aprox con padding)
+            let leftPos = '1.5%';
+            if(index === 1) leftPos = '33.8%';
+            if(index === 2) leftPos = '66.5%';
+            slider.style.left = leftPos;
+
+            // 2. Actualizar inputs ocultos
+            document.getElementById('cantidad_tickets').value = qty;
+            document.getElementById('monto_pagar').value = price.toFixed(2);
+
+            // 3. Actualizar Texto de Precio Abajo
+            const displayAmount = document.getElementById('displayAmount');
+            displayAmount.style.opacity = '0';
+            setTimeout(() => {
+                displayAmount.innerText = `S/ ${price.toFixed(2)}`;
+                displayAmount.style.opacity = '1';
+            }, 200);
+
+            // 4. Feedback Vibración
+            if (navigator.vibrate) navigator.vibrate(50);
+        }
 
         function scrollToPayment() {
             document.getElementById('paymentSection').scrollIntoView({ behavior: 'smooth' });
@@ -549,19 +624,27 @@
             btnEnviar.disabled = true;
             btnEnviar.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Enviando...`;
 
+            // Obtener campos ocultos
+            const cantidadTickets = document.getElementById('cantidad_tickets').value;
+            const montoPagar = document.getElementById('monto_pagar').value;
+
             const formData = new FormData();
             formData.append('dni', dniInput.value);
             formData.append('nombre', nombreInput.value);
             formData.append('whatsapp', telefonoInput.value);
             formData.append('fecha', new Date().toLocaleString('es-PE'));
             formData.append('archivo', fileInput.files[0]);
+            
+            // AGREGAR NUEVOS CAMPOS AL ENVÍO
+            formData.append('cantidad_tickets', cantidadTickets);
+            formData.append('monto_pagar', montoPagar);
 
             try {
                 const response = await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
                 if (response.ok) {
                     Swal.fire({
                         title: '¡Registro Exitoso!',
-                        text: 'Mucha suerte en el sorteo.',
+                        html: `Has registrado <b>${cantidadTickets} ticket(s)</b>.<br>Mucha suerte en el sorteo.`,
                         icon: 'success',
                         background: '#fff',
                         color: '#000',
