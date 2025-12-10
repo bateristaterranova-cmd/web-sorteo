@@ -332,7 +332,7 @@
                 <div id="uploadContainer">
                     <label class="block text-xs font-bold text-gray-700 mb-1 ml-1">SUBIR COMPROBANTE</label>
                     <div class="relative">
-                        <!-- CAMBIO: Se reemplaza 'hidden' por 'absolute opacity-0...' para que el navegador pueda enfocarlo y mostrar la alerta -->
+                        <!-- CAMBIO: Se mantiene accept para filtro visual en el explorador de archivos -->
                         <input type="file" id="comprobante" name="comprobante" required accept=".png, .jpg, .jpeg, .pdf" 
                                class="absolute opacity-0 w-1 h-1 -z-10" 
                                onchange="updateFileName(this)"
@@ -346,8 +346,9 @@
                             <span id="fileNameDisplay" class="text-gray-400 italic truncate text-xs">Ningún archivo seleccionado</span>
                         </label>
 
+                        <!-- CAMBIO: Texto informativo actualizado -->
                         <p class="text-[10px] text-gray-400 mt-1 ml-1 flex items-center gap-1">
-                            <i class="fas fa-info-circle"></i> Solo PNG, JPG, JPEG o PDF
+                            <i class="fas fa-info-circle"></i> Solo PNG, JPG, JPEG o PDF (Máx. 5MB)
                         </p>
                     </div>
                 </div>
@@ -539,8 +540,52 @@
 
         function updateFileName(input) {
             const display = document.getElementById('fileNameDisplay');
+            const MAX_MB = 5; // Límite de 5 Megabytes
+            
             if (input.files && input.files.length > 0) {
-                display.textContent = input.files[0].name;
+                const file = input.files[0];
+                const fileSizeMB = file.size / 1024 / 1024;
+                
+                // 1. VALIDACIÓN DE PESO
+                if (fileSizeMB > MAX_MB) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Archivo muy pesado',
+                        text: `El archivo pesa ${fileSizeMB.toFixed(2)}MB. El límite es de ${MAX_MB}MB.`,
+                        confirmButtonColor: '#FFD700',
+                        color: '#000'
+                    });
+                    input.value = ''; // Limpiar el input
+                    display.textContent = 'Ningún archivo seleccionado';
+                    display.classList.add('text-gray-400', 'italic');
+                    display.classList.remove('text-gray-800', 'font-semibold');
+                    checkFormValidity();
+                    return;
+                }
+
+                // 2. VALIDACIÓN EXTRA DE EXTENSIÓN (Seguridad adicional al atributo accept)
+                const fileName = file.name.toLowerCase();
+                const validExtensions = ['.png', '.jpg', '.jpeg', '.pdf'];
+                const isValidExtension = validExtensions.some(ext => fileName.endsWith(ext));
+
+                if (!isValidExtension) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Formato no válido',
+                        text: 'Solo se permiten archivos PNG, JPG, JPEG o PDF.',
+                        confirmButtonColor: '#FFD700',
+                        color: '#000'
+                    });
+                    input.value = '';
+                    display.textContent = 'Ningún archivo seleccionado';
+                    display.classList.add('text-gray-400', 'italic');
+                    display.classList.remove('text-gray-800', 'font-semibold');
+                    checkFormValidity();
+                    return;
+                }
+
+                // Si pasa las validaciones
+                display.textContent = file.name;
                 display.classList.remove('text-gray-400', 'italic');
                 display.classList.add('text-gray-800', 'font-semibold');
             } else {
