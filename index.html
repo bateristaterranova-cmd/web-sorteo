@@ -182,6 +182,25 @@
             background-color: #128c7e;
         }
 
+        /* NUEVA ANIMACIÓN PARA EL BOTÓN DE LA ALERTA FINAL */
+        @keyframes pulse-green-alert {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(37, 211, 102, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+        
+        /* Clase personalizada para SweetAlert */
+        .swal-btn-pulse {
+            animation: pulse-green-alert 2s infinite !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 15px 30px !important;
+            font-size: 1.1em !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+        }
+
         .font-comparsa { font-family: 'Oswald', sans-serif; }
         .font-star { font-family: 'Montserrat', sans-serif; }
 
@@ -240,9 +259,11 @@
                 
                 <!-- SELECTOR DE TICKETS -->
                 <div>
-                    <div class="flex justify-between items-center mb-6 px-1">
+                    <!-- AJUSTE: 'flex-col' en móvil para que no se choquen, 'sm:flex-row' en pantallas grandes -->
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 px-1 gap-2">
                         <label class="block text-xs font-bold text-gray-700">ELIGE TUS TICKETS</label>
-                        <span class="text-[10px] font-bold text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full border border-yellow-200 shadow-sm animate-pulse">
+                        <!-- AJUSTE: 'w-max' para que ocupe lo necesario y no se estire raro -->
+                        <span class="w-max text-[10px] font-bold text-yellow-600 bg-yellow-50 px-3 py-1 rounded-full border border-yellow-200 shadow-sm animate-pulse flex items-center">
                             <i class="fas fa-chart-line mr-1"></i>¡Maximiza tus posibilidades!
                         </span>
                     </div>
@@ -257,13 +278,18 @@
                                 <span class="text-sm font-bold text-gray-600 group-hover:text-black transition-colors">1 Ticket</span>
                                 <span class="text-xl font-bold text-gray-500 mt-1 group-hover:text-gray-700 transition-colors">S/ 10</span>
                             </div>
+                            
+                            <!-- OPCIÓN 2 (CENTRAL) -->
                             <div class="flex flex-col justify-center items-center cursor-pointer relative group" onclick="selectTicket(2, 15, 1)">
-                                <span class="absolute -top-5 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-600 text-white text-[9px] px-2 py-0.5 rounded-full font-extrabold uppercase shadow-[0_0_10px_rgba(250,204,21,0.6)] z-20 tracking-wider border border-yellow-300">
+                                <!-- AJUSTE: 'whitespace-nowrap' evita que el texto se rompa en dos líneas -->
+                                <!-- AJUSTE: 'w-max' asegura que el ancho se adapte al texto -->
+                                <span class="absolute -top-5 whitespace-nowrap w-max bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-600 text-white text-[9px] px-2 py-0.5 rounded-full font-extrabold uppercase shadow-[0_0_10px_rgba(250,204,21,0.6)] z-20 tracking-wider border border-yellow-300">
                                     MÁS COMPRADO
                                 </span>
                                 <span class="text-sm font-bold text-gray-800">2 Tickets</span>
                                 <span class="text-2xl font-black text-yellow-600 mt-1">S/ 15</span>
                             </div>
+
                             <div class="flex flex-col justify-center items-center cursor-pointer group" onclick="selectTicket(3, 20, 2)">
                                 <span class="text-sm font-bold text-gray-600 group-hover:text-black transition-colors">3 Tickets</span>
                                 <span class="text-xl font-bold text-gray-500 mt-1 group-hover:text-gray-700 transition-colors">S/ 20</span>
@@ -764,9 +790,10 @@
 
             const cantidadTickets = document.getElementById('cantidad_tickets').value;
             const montoPagar = document.getElementById('monto_pagar').value;
+            const dniValue = dniInput.value; // Guardamos el DNI para el mensaje de WhatsApp
 
             const formData = new FormData();
-            formData.append('dni', dniInput.value);
+            formData.append('dni', dniValue);
             formData.append('nombre', nombreInput.value);
             formData.append('whatsapp', telefonoInput.value);
             formData.append('fecha', new Date().toLocaleString('es-PE'));
@@ -777,15 +804,54 @@
             try {
                 const response = await fetch(WEBHOOK_REGISTRO_URL, { method: 'POST', body: formData });
                 if (response.ok) {
+                    // --- NUEVA ALERTA DE ÉXITO CON WHATSAPP OBLIGATORIO Y ANIMADO ---
                     Swal.fire({
-                        title: '¡Registro Exitoso!',
-                        html: `Has registrado <b>${cantidadTickets} ticket(s)</b>.<br>Mucha suerte en el sorteo.`,
+                        title: '¡CASI TERMINAMOS!', // Título más urgente
+                        html: `
+                            <div class="text-left bg-green-50 p-5 rounded-xl border-2 border-green-200 mb-2 shadow-sm">
+                                <p class="mb-3 text-gray-700 text-center font-semibold">
+                                    Tus <b>${cantidadTickets} ticket(s)</b> han sido reservados.
+                                </p>
+                                <div class="text-center">
+                                    <p class="font-black text-green-700 text-lg mb-1 animate-bounce">
+                                        ⚠️ PASO OBLIGATORIO
+                                    </p>
+                                    <p class="text-sm text-gray-800 leading-relaxed">
+                                        Para validar tu participación, debes enviarnos tu DNI por WhatsApp <b>AHORA MISMO</b>.
+                                    </p>
+                                </div>
+                            </div>
+                        `,
                         icon: 'success',
                         background: '#fff',
-                        color: '#000',
-                        confirmButtonColor: '#FFD700',
-                        confirmButtonText: '<span style="color:black; font-weight:bold;">GENIAL</span>'
-                    }).then(() => { window.location.reload(); });
+                        
+                        // BLOQUEO DE CIERRE: El usuario NO puede cerrar esto sin dar click al botón
+                        showCancelButton: false, 
+                        showCloseButton: false,
+                        allowOutsideClick: false, 
+                        allowEscapeKey: false,
+
+                        confirmButtonColor: '#25d366', // Color WhatsApp
+                        confirmButtonText: '<i class="fab fa-whatsapp text-2xl mr-2"></i> ENVIAR MI DNI AHORA',
+                        
+                        // Clase CSS personalizada para la animación
+                        customClass: {
+                            confirmButton: 'swal-btn-pulse'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Redirigir a WhatsApp con mensaje predefinido (Con saltos de línea y negrita)
+                            const mensaje = `Hola Comparsa Starmusic,\nacabo de registrarme en el sorteo.\n*Mi número de DNI es ${dniValue}*`;
+                            const url = `https://wa.me/51997909467?text=${encodeURIComponent(mensaje)}`;
+                            window.open(url, '_blank');
+                            
+                            // Recargar la página solo después de que hayan dado click
+                            setTimeout(() => {
+                                window.location.reload(); 
+                            }, 1000);
+                        }
+                    });
+                    
                     document.getElementById('sorteoForm').reset();
                 } else { throw new Error('Error en el envío'); }
             } catch (error) {
