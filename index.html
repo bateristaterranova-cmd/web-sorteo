@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sorteo Comparsa STARMUSIC 2025</title>
+    
+    <!-- CAMBIO: Nuevo Favicon (Icono de la pestaña) -->
+    <link rel="icon" href="https://res.cloudinary.com/ds1mro6a1/image/upload/v1765737001/image-removebg-preview_wouzc2.png" type="image/png">
+    <link rel="shortcut icon" href="https://res.cloudinary.com/ds1mro6a1/image/upload/v1765737001/image-removebg-preview_wouzc2.png" type="image/png">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
@@ -143,9 +148,15 @@
         }
         .countdown-item {
             display: inline-block;
-            margin: 0 10px;
+            margin: 0 4px;
             text-align: center;
+            min-width: 35px; /* Asegura que cada número tenga su espacio reservado */
         }
+        /* En pantallas más grandes, recuperamos el margen amplio */
+        @media (min-width: 640px) {
+            .countdown-item { margin: 0 10px; }
+        }
+
         .countdown-number {
             font-family: 'Oswald', sans-serif;
             font-size: 1.5rem;
@@ -212,6 +223,7 @@
     <!-- MENÚ SUPERIOR -->
     <nav class="glass-header w-full fixed top-0 left-0 z-50 px-4 py-3 flex justify-between items-center">
         <div class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition" onclick="scrollToTop()">
+            <!-- REVERTIDO: Logo Original -->
             <img src="https://res.cloudinary.com/ds1mro6a1/image/upload/v1765305589/IMG_2743_n29h1e.png" alt="Logo Mini" class="h-14 w-auto object-contain drop-shadow-sm">
         </div>
         <div class="flex items-center gap-4">
@@ -240,10 +252,11 @@
         <!-- PARTE SUPERIOR: FORMULARIO -->
         <div id="mainFormSection">
             <div class="text-center mb-1">
+                <!-- REVERTIDO: Logo Original -->
                 <img src="https://res.cloudinary.com/ds1mro6a1/image/upload/v1765305589/IMG_2743_n29h1e.png" 
                      alt="Logo Comparsa Starmusic" 
                      class="w-full max-w-[350px] mx-auto drop-shadow-xl hover:scale-105 transition-transform duration-300 -mt-6 -mb-4">
-                <!-- CAMBIO: Texto actualizado y ajuste de tracking/tamaño para que encaje bien -->
+                
                 <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest mt-0 relative z-10">
                     tú puedes ser uno de los 17 ganadores
                 </p>
@@ -262,38 +275,60 @@
                     <!-- AJUSTE: 'flex-col' en móvil para que no se choquen, 'sm:flex-row' en pantallas grandes -->
                     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 px-1 gap-2">
                         <label class="block text-xs font-bold text-gray-700">ELIGE TUS TICKETS</label>
-                        <!-- AJUSTE: 'w-max' para que ocupe lo necesario y no se estire raro -->
-                        <span class="w-max text-[10px] font-bold text-yellow-600 bg-yellow-50 px-3 py-1 rounded-full border border-yellow-200 shadow-sm animate-pulse flex items-center">
-                            <i class="fas fa-chart-line mr-1"></i>¡Maximiza tus posibilidades!
+                        <span class="w-max text-[10px] font-bold text-yellow-600 bg-yellow-50 px-3 py-1 rounded-full border border-yellow-200 shadow-sm flex items-center">
+                            <i class="fas fa-chart-line mr-1"></i>¡Multiplica tus posibilidades!
                         </span>
                     </div>
                     
                     <input type="hidden" name="cantidad_tickets" id="cantidad_tickets" value="2">
                     <input type="hidden" name="monto_pagar" id="monto_pagar" value="15.00">
 
-                    <div class="relative bg-gray-100 rounded-xl p-1.5 h-24 mt-1 shadow-inner border border-gray-200">
+                    <!-- Mantenemos la altura h-28 que da buen aire -->
+                    <div class="relative bg-gray-100 rounded-xl p-1.5 h-28 mt-1 shadow-inner border border-gray-200">
                         <div id="selection-slider" class="absolute top-1.5 bottom-1.5 w-[32%] bg-white border-2 border-yellow-400 rounded-lg shadow-md transition-all duration-300 ease-out z-0" style="left: 33.8%;"></div>
+                        
                         <div class="relative z-10 grid grid-cols-3 h-full">
-                            <div class="flex flex-col justify-center items-center cursor-pointer group" onclick="selectTicket(1, 10, 0)">
-                                <span class="text-sm font-bold text-gray-600 group-hover:text-black transition-colors">1 Ticket</span>
-                                <span class="text-xl font-bold text-gray-500 mt-1 group-hover:text-gray-700 transition-colors">S/ 10</span>
+                            
+                            <!-- OPCIÓN 1: Alineada con placeholder -->
+                            <div class="flex flex-col justify-center items-center cursor-pointer group h-full" onclick="selectTicket(1, 10, 0)">
+                                <span class="text-sm font-bold text-gray-600 group-hover:text-black transition-colors mb-1">x1 Ticket</span>
+                                
+                                <!-- TRUCO DE ALINEACIÓN: Precio tachado invisible para empujar el precio final hacia abajo y alinearlo con x3 -->
+                                <span class="text-xs font-bold text-transparent mb-0.5">S/ 00</span>
+                                
+                                <!-- Precio Aumentado -->
+                                <span class="text-2xl font-bold text-gray-500 group-hover:text-gray-700 transition-colors leading-none">S/ 10</span>
                             </div>
                             
-                            <!-- OPCIÓN 2 (CENTRAL) -->
-                            <div class="flex flex-col justify-center items-center cursor-pointer relative group" onclick="selectTicket(2, 15, 1)">
-                                <!-- AJUSTE: 'whitespace-nowrap' evita que el texto se rompa en dos líneas -->
-                                <!-- AJUSTE: 'w-max' asegura que el ancho se adapte al texto -->
-                                <span class="absolute -top-5 whitespace-nowrap w-max bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-600 text-white text-[9px] px-2 py-0.5 rounded-full font-extrabold uppercase shadow-[0_0_10px_rgba(250,204,21,0.6)] z-20 tracking-wider border border-yellow-300">
+                            <!-- OPCIÓN 2 (CENTRAL): Destacada -->
+                            <div class="flex flex-col justify-center items-center cursor-pointer relative group h-full" onclick="selectTicket(2, 15, 1)">
+                                <!-- BADGE MÁS COMPRADO (Fuera) -->
+                                <span class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-600 text-white text-[9px] px-4 py-0.5 rounded-full font-extrabold uppercase shadow-[0_0_10px_rgba(250,204,21,0.5)] tracking-wider border border-yellow-300 z-20 w-max group-hover:scale-105 transition-transform">
                                     MÁS COMPRADO
                                 </span>
-                                <span class="text-sm font-bold text-gray-800">2 Tickets</span>
-                                <span class="text-2xl font-black text-yellow-600 mt-1">S/ 15</span>
+
+                                <span class="text-base font-bold text-gray-800 leading-none mb-1 mt-1">x2 Tickets</span>
+                                
+                                <div class="flex flex-col items-center justify-center leading-none">
+                                    <!-- Precio Tachado: Más visible (gris más oscuro y letra un poco más grande) -->
+                                    <span class="text-xs text-gray-500 line-through font-bold mb-0.5">S/ 20</span>
+                                    <!-- Precio Final: Muy grande -->
+                                    <span class="text-3xl font-black text-yellow-600 filter drop-shadow-sm">S/ 15</span>
+                                </div>
                             </div>
 
-                            <div class="flex flex-col justify-center items-center cursor-pointer group" onclick="selectTicket(3, 20, 2)">
-                                <span class="text-sm font-bold text-gray-600 group-hover:text-black transition-colors">3 Tickets</span>
-                                <span class="text-xl font-bold text-gray-500 mt-1 group-hover:text-gray-700 transition-colors">S/ 20</span>
+                            <!-- OPCIÓN 3: Alineada -->
+                            <div class="flex flex-col justify-center items-center cursor-pointer group h-full" onclick="selectTicket(3, 20, 2)">
+                                <span class="text-sm font-bold text-gray-600 group-hover:text-black transition-colors mb-1">x3 Tickets</span>
+                                
+                                <div class="flex flex-col items-center justify-center leading-none">
+                                    <!-- Precio Tachado: Más visible -->
+                                    <span class="text-xs text-gray-500 line-through font-bold group-hover:text-gray-600 transition-colors mb-0.5">S/ 30</span>
+                                    <!-- Precio Final: Aumentado -->
+                                    <span class="text-2xl font-bold text-gray-500 group-hover:text-gray-700 transition-colors">S/ 20</span>
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -461,22 +496,23 @@
     <!-- CONTADOR -->
     <div class="countdown-bar">
         <div class="flex justify-center items-center gap-1 sm:gap-4">
-            <span class="text-xs font-bold uppercase mr-2 hidden sm:inline">El Sorteo empieza en:</span>
+            <span class="text-xs font-bold uppercase mr-2 hidden md:inline">El Sorteo empieza en:</span>
+            
             <div class="countdown-item">
                 <div id="days" class="countdown-number">00</div>
                 <div class="countdown-label">Días</div>
             </div>
-            <span class="text-yellow-500 font-bold">:</span>
+            <span class="text-yellow-500 font-bold text-lg pb-4">:</span>
             <div class="countdown-item">
                 <div id="hours" class="countdown-number">00</div>
                 <div class="countdown-label">Horas</div>
             </div>
-            <span class="text-yellow-500 font-bold">:</span>
+            <span class="text-yellow-500 font-bold text-lg pb-4">:</span>
             <div class="countdown-item">
                 <div id="minutes" class="countdown-number">00</div>
                 <div class="countdown-label">Min</div>
             </div>
-            <span class="text-yellow-500 font-bold">:</span>
+            <span class="text-yellow-500 font-bold text-lg pb-4">:</span>
             <div class="countdown-item">
                 <div id="seconds" class="countdown-number">00</div>
                 <div class="countdown-label">Seg</div>
